@@ -25,6 +25,11 @@ public class DataAccess
                 Category TEXT NOT NULL,
                 Amount REAL NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS Categories (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT UNIQUE NOT NULL
+            );
         """);
     }
 
@@ -59,7 +64,16 @@ public class DataAccess
             "SELECT Amount FROM Budgets WHERE Month = @Month AND Year = @Year",
             new { Month = month, Year = year });
     }
+    // LOGIC TO GET REMAINING BUDGET, DO IT AFTER YOU DO EXPENSES
+    // public async Task<double> GetRemainingBudget(string month, int year)
+    // {
+    // using var conn = new SqliteConnection(ConnectionString);
 
+    // var budget = await GetCurrentBudget(month, year);
+    // var expenses = await GetTotalExpensesForMonth(month, year);
+
+    // return budget - expenses;
+    // }
     public async Task AddTransaction(string date, string description, string category, double amount)
     {
         using var conn = new SqliteConnection(ConnectionString);
@@ -86,16 +100,25 @@ public class DataAccess
               WHERE strftime('%m', Date) = @Month AND strftime('%Y', Date) = @Year",
             new { Month = month.PadLeft(2, '0'), Year = year.ToString() });
     }
-    // LOGIC TO GET REMAINING BUDGET, DO IT AFTER YOU DO EXPENSES
-    // public async Task<double> GetRemainingBudget(string month, int year)
-    // {
-    // using var conn = new SqliteConnection(ConnectionString);
 
-    // var budget = await GetCurrentBudget(month, year);
-    // var expenses = await GetTotalExpensesForMonth(month, year);
+    public async Task<IEnumerable<string>> GetCategories()
+    {
+        using var conn = new SqliteConnection(ConnectionString);
+        return await conn.QueryAsync<string>("SELECT Name FROM Categories ORDER BY Name");
+    }
 
-    // return budget - expenses;
-    // }
+    public async Task AddCategory(string categoryName)
+    {
+        using var conn = new SqliteConnection(ConnectionString);
+        try
+        {
+            await conn.ExecuteAsync("INSERT INTO Categories (Name) VALUES (@Name)", new { Name = categoryName });
+        }
+        catch (SqliteException)
+        {
+            // Ignore duplicate category errors
+        }
+    }
 }
 
 public class Transaction

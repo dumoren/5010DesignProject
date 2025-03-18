@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="FinanceTracker.Views.AddCategoryWindow"
+        Title="Add New Category"
+        Width="300" Height="150">
+    
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock Text="Enter New Category:"/>
+        <TextBox Name="CategoryInput" Watermark="Category Name"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel" Width="80" Click="OnCancel"/>
+            <Button Content="OK" Width="80" Click="OnConfirm"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

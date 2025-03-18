@@ -3,6 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using FinanceTracker.Views;
+using Avalonia.Controls;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace FinanceTracker.ViewModels
 {
@@ -27,12 +31,18 @@ namespace FinanceTracker.ViewModels
         [ObservableProperty]
         private string _selectedCategory = "Add New";  // Default to "Add New"
 
+        [ObservableProperty]
+        private Transaction? _selectedTransaction;
+
         public ObservableCollection<string> Categories { get; } = new();
+
+        public ObservableCollection<Transaction> Transactions { get; } = new();
 
         public MainWindowViewModel()
         {
             LoadCurrentBudget();
             LoadCategories();
+            LoadTransactions();
         }
 
         // Load current budget on app startup
@@ -78,38 +88,81 @@ namespace FinanceTracker.ViewModels
             }
         }
 
+        private async void LoadTransactions()
+        {
+            string month = DateTime.Now.ToString("MM");
+            int year = DateTime.Now.Year;
+            var transactions = await _dataAccess.GetTransactions(month, year);
+
+            Transactions.Clear();
+            Console.WriteLine("wowwwwzerrrrrrrrs"); // Debugging output
+           
+            foreach (var transaction in transactions)
+            {
+                
+                Transactions.Add(transaction);
+            }
+        }
+
         // Add expense transaction
         [RelayCommand]
         private async Task AddTransaction()
         {
+            Console.WriteLine($"Attempting to save transaction: {ExpenseDesc}, {SelectedCategory}, {ExpenseAmount}");
+
             if (SelectedCategory == "Add New")
             {
-                var newCategory = PromptForNewCategory();
+                var newCategory = await PromptForNewCategory();
                 if (!string.IsNullOrWhiteSpace(newCategory))
                 {
+                    Console.WriteLine($"Adding new category: {newCategory}");
                     await _dataAccess.AddCategory(newCategory);
-                    LoadCategories(); // Refresh categories
+                    LoadCategories();
                     SelectedCategory = newCategory;
                 }
-                return; // Wait for the new category before proceeding
+                return; // Stop here until a valid category is chosen
             }
 
             if (double.TryParse(ExpenseAmount, out double amount) && amount > 0)
             {
                 string date = DateTime.Now.ToString("yyyy-MM-dd");
+                Console.WriteLine($"Final transaction values: {date}, {ExpenseDesc}, {SelectedCategory}, {amount}");
 
                 await _dataAccess.AddTransaction(date, ExpenseDesc, SelectedCategory, amount);
+
+                Console.WriteLine("Transaction added successfully!");
+
+                LoadTransactions(); // Refresh list
 
                 // Clear input fields
                 ExpenseDesc = "";
                 ExpenseAmount = "";
             }
+            else
+            {
+                Console.WriteLine("Invalid amount entered.");
+            }
+        }
+
+
+        [RelayCommand]
+        private async Task DeleteTransaction(int transactionId)
+        {
+            await _dataAccess.DeleteTransaction(transactionId);
+            LoadTransactions();
         }
 
         // Placeholder for a UI popup to add a new category
-        private string PromptForNewCategory()
+        private async Task<string> PromptForNewCategory()
         {
-            return "User Inputted Category"; // Replace with a real UI prompt
+            var categoryWindow = new AddCategoryWindow();
+
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+            {
+                await categoryWindow.ShowDialog(desktopLifetime.MainWindow);
+            }
+
+            return !string.IsNullOrWhiteSpace(categoryWindow.NewCategory) ? categoryWindow.NewCategory : "";
         }
     }
 }

@@ -12,3 +12,8 @@ CREATE TABLE Transactions (
     Category TEXT NOT NULL,
     Amount REAL NOT NULL
 );
+
+CREATE TABLE Categories (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT UNIQUE NOT NULL
+);

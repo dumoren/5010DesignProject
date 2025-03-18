@@ -2,6 +2,7 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 public class DataAccess
 {
@@ -75,10 +76,30 @@ public class DataAccess
     // return budget - expenses;
     // }
     public async Task AddTransaction(string date, string description, string category, double amount)
+{
+    using var conn = new SqliteConnection(ConnectionString);
+    
+    Console.WriteLine($"SQL Insert Attempt: {date}, {description}, {category}, {amount}");
+    
+    try
+    {
+        await conn.ExecuteAsync(
+            "INSERT INTO Transactions (Date, Description, Category, Amount) VALUES (DATE(@Date), @Description, @Category, @Amount)",
+            new { Date = date, Description = description, Category = category, Amount = amount });
+
+        Console.WriteLine("SQL Insert Success!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"SQL Insert Failed: {ex.Message}");
+    }
+}
+
+
+    public async Task DeleteTransaction(int transactionId)
     {
         using var conn = new SqliteConnection(ConnectionString);
-        await conn.ExecuteAsync("INSERT INTO Transactions (Date, Description, Category, Amount) VALUES (DATE(@Date), @Description, @Category, @Amount)",
-            new { Date = date, Description = description, Category = category, Amount = amount });
+        await conn.ExecuteAsync("DELETE FROM Transactions WHERE Id = @Id", new { Id = transactionId });
     }
 
     public async Task<double> GetTotalExpensesForMonth(string month, int year)

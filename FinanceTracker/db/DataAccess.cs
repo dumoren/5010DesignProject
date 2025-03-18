@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 public class DataAccess
 {
-    private const string ConnectionString = "Data Source=db/finance.db";
+    private const string ConnectionString = "Data Source=finance.db;Mode=ReadWriteCreate;";
 
     public DataAccess()
     {
@@ -74,8 +74,8 @@ public class DataAccess
 public class Transaction
 {
     public int Id { get; set; }
-    public required string Date { get; set; }
-    public required string Description { get; set; }
-    public required string Category { get; set; }
+    public string Date { get; set; }
+    public string Description { get; set; }
+    public string Category { get; set; }
     public double Amount { get; set; }
 }

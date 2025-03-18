@@ -16,8 +16,8 @@
     <StackPanel Margin="20" Spacing="10">
         <TextBlock Text="Set Monthly Budget:" FontWeight="Bold"/>
         <StackPanel Orientation="Horizontal" Spacing="5">
-            <TextBox Name="BudgetInput" Width="150" Watermark="Budget Amount"/>
-            <Button Content="Set Budget" Width="100"/>
+            <TextBox Name="BudgetInput" Width="150" Watermark="Budget Amount" Text="{Binding BudgetInput, Mode=TwoWay}"/>
+            <Button Content="Set Budget" Width="100" Command="{Binding SetBudgetCommand}"/>
         </StackPanel>
 
         <TextBlock Text="Add Expense" FontWeight="Bold" Margin="0,10,0,0"/>
@@ -29,7 +29,7 @@
         </StackPanel>
 
         <TextBlock Text="Current Budget:" FontWeight="Bold" Margin="0,15,0,0"/>
-        <TextBlock Name="BudgetDisplay" FontSize="16"/>
+        <TextBlock Name="BudgetDisplay" FontSize="16" Text="{Binding BudgetDisplay}"/>
 
         <TextBlock Text="Expenses This Month:" FontWeight="Bold" Margin="0,15,0,0"/>
         <ListBox Name="TransactionList" Height="200"/>

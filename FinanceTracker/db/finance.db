@@ -1,0 +1,14 @@
+CREATE TABLE Budgets (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Month TEXT NOT NULL,
+    Year INTEGER NOT NULL,
+    Amount REAL NOT NULL
+);
+
+CREATE TABLE Transactions (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Date TEXT NOT NULL,
+    Description TEXT NOT NULL,
+    Category TEXT NOT NULL,
+    Amount REAL NOT NULL
+);

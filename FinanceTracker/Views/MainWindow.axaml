@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:FinanceTracker.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="FinanceTracker.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Personal Finance Tracker">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock Text="Set Monthly Budget:" FontWeight="Bold"/>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBox Name="BudgetInput" Width="150" Watermark="Budget Amount"/>
+            <Button Content="Set Budget" Width="100"/>
+        </StackPanel>
+
+        <TextBlock Text="Add Expense" FontWeight="Bold" Margin="0,10,0,0"/>
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBox Name="ExpenseDesc" Watermark="Description" Width="150"/>
+            <TextBox Name="ExpenseCategory" Watermark="Category" Width="150"/>
+            <TextBox Name="ExpenseAmount" Watermark="Amount" Width="100"/>
+            <Button Content="Add" Width="80"/>
+        </StackPanel>
+
+        <TextBlock Text="Current Budget:" FontWeight="Bold" Margin="0,15,0,0"/>
+        <TextBlock Name="BudgetDisplay" FontSize="16"/>
+
+        <TextBlock Text="Expenses This Month:" FontWeight="Bold" Margin="0,15,0,0"/>
+        <ListBox Name="TransactionList" Height="200"/>
+    </StackPanel>
+</Window>
